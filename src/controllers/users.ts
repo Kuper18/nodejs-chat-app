@@ -82,8 +82,13 @@ export const getAllUsers = async (
   req: Request,
   res: Response
 ): Promise<any> => {
+  const userId = req.sub.id;
+
   try {
-    const users = await prisma.user.findMany({ include: { messages: true }});
+    const users = await prisma.user.findMany({
+      include: { messages: true },
+      where: { id: { not: userId } },
+    });
 
     return res.status(200).send(users);
   } catch (error) {
@@ -98,7 +103,7 @@ export const getMe = async (req: Request, res: Response): Promise<any> => {
   const id = Number(req.sub);
 
   try {
-    const user = await prisma.user.findUnique({ where: { id }});
+    const user = await prisma.user.findUnique({ where: { id } });
 
     return res.status(200).send(user);
   } catch (error) {
