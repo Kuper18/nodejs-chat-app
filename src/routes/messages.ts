@@ -1,8 +1,9 @@
 import express, { Request, Response } from 'express';
 
 import auth from '../middleware/auth';
-import prisma from '../prisma';
+import prisma from '../modules/prisma';
 import { messageSchema } from '../validators/messages';
+import { getIO } from '../modules/socket';
 
 const router = express.Router();
 
@@ -36,15 +37,21 @@ router.post('/', auth, async (req: Request, res: Response): Promise<any> => {
   }
 
   const { content, roomId, userId } = parseResult.data;
-
+  
   try {
     const message = await prisma.message.create({
-      data: { content, roomId, userId },
+      data: { content, roomId, recipientId: 1, senderId: 1, },
     });
-  
+
+    const io = getIO();
+
+    io.to(`room-${roomId}`).emit('private-message', message);
+
     return res.status(201).json(message);
   } catch (error) {
-    return res.status(500).json({ message: 'Cannot create a message at the moment.'})
+    return res
+      .status(500)
+      .json({ message: 'Cannot create a message at the moment.' });
   }
 });
 

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 
 import { loginSchema, signupSchema } from '../validators/auth';
-import prisma from '../prisma';
+import prisma from '../modules/prisma';
 import { generateTokens } from '../services/auth';
 
 export const signup = async (req: Request, res: Response): Promise<any> => {
@@ -86,7 +86,7 @@ export const getAllUsers = async (
 
   try {
     const users = await prisma.user.findMany({
-      include: { messages: true },
+      include: { receivedMessages: true, sentMessages: true },
       where: { id: { not: userId } },
     });
 

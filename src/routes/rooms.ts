@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 
 import auth from '../middleware/auth';
-import prisma from '../prisma';
+import prisma from '../modules/prisma';
 import { roomSchema } from '../validators/rooms';
 
 const router = express.Router();
@@ -28,6 +28,7 @@ router.get('/', auth, async (req: Request, res: Response): Promise<any> => {
         users: { some: { id: currentUserId } },
         AND: { users: { some: { id: peerId } } },
       },
+      include: { users: true },
     });
 
     return res.status(200).json(room);

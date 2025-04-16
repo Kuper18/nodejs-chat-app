@@ -1,15 +1,21 @@
+import { createServer } from 'node:http';
+
 import express from 'express';
 import cors from 'cors';
 
-import prisma from './prisma';
+import prisma from './modules/prisma';
 
 import users from './routes/users';
 import rooms from './routes/rooms';
 import messages from './routes/messages';
 import refreshToken from './routes/refresh-token';
+import { initSocket } from './modules/socket';
 
 const app = express();
+const server = createServer(app);
 const PORT = process.env.PORT || 8000;
+
+initSocket(server);
 
 app.use(cors());
 app.use(express.json());
@@ -24,7 +30,7 @@ prisma
   .then(() => console.log('Connected to the database'))
   .catch((error) => console.error('Failed to connect to the database:', error));
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
