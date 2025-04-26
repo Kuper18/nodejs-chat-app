@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import prisma from '../modules/prisma';
-import { messageSchema, readMessageSchema, updateMessageSchema } from '../validators/messages';
+import {
+  messageSchema,
+  readMessageSchema,
+  updateMessageSchema,
+} from '../validators/messages';
 import { getIO } from '../modules/socket';
 
 export const getMessages = async (
@@ -76,6 +80,7 @@ export const createMessage = async (
     const io = getIO();
 
     io.to(`room-${roomId}`).emit('private-message', message);
+    io.emit('notification', message);
 
     return res.status(201).json(message);
   } catch (error) {

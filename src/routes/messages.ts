@@ -14,7 +14,7 @@ const router = express.Router();
 router.get('/unread-counts', auth, getUnreadMessagesCount);
 router.get('/:roomId', auth, getMessages);
 router.post('/', auth, createMessage);
-router.patch('/:messageId', auth, updateMessage);
 router.patch('/read/:messageId', auth, readMessage);
+router.patch('/:messageId', auth, updateMessage);
 
 export default router;

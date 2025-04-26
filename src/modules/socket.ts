@@ -17,7 +17,7 @@ export const initSocket = (server: HttpServer): IOServer => {
     const roomId = socket.handshake.query.roomId;
 
     if (roomId) {
-      socket.join(`room-${roomId}`)
+      socket.join(`room-${roomId}`);
     }
 
     socket.on('disconnect', () => {
