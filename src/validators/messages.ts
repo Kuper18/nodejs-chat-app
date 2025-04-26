@@ -6,3 +6,10 @@ export const messageSchema = z.object({
   senderId: z.number().int(),
   roomId: z.number().int(),
 });
+
+export const updateMessageSchema = messageSchema.pick({ content: true });
+
+export const readMessageSchema = z.object({
+  isRead: z.boolean(),
+  recipientId: z.number().int(),
+});

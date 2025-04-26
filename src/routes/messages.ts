@@ -1,11 +1,20 @@
 import express from 'express';
 
-import { createMessage, getMessages } from '../controllers/messages';
+import {
+  createMessage,
+  getMessages,
+  getUnreadMessagesCount,
+  readMessage,
+  updateMessage,
+} from '../controllers/messages';
 import auth from '../middleware/auth';
 
 const router = express.Router();
 
+router.get('/unread-counts', auth, getUnreadMessagesCount);
 router.get('/:roomId', auth, getMessages);
 router.post('/', auth, createMessage);
+router.patch('/:messageId', auth, updateMessage);
+router.patch('/read/:messageId', auth, readMessage);
 
 export default router;
