@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '../modules/prisma';
+import { Prisma } from '@prisma/client';
 import {
   messageSchema,
   readMessageSchema,
@@ -18,12 +19,36 @@ export const getMessages = async (
   }
 
   try {
-    const messages = await prisma.message.findMany({
-      where: { roomId },
-      orderBy: { createdAt: 'asc' },
-    });
+    const { cursor, limit = 20 } = req.query;
+    const cursorAsNum = Number(cursor);
+    const limitAsNum = Number(limit);
 
-    return res.status(200).json(messages);
+    const baseQuery: Prisma.MessageFindManyArgs = {
+      take: limitAsNum,
+      where: { roomId },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    };
+
+    if (cursorAsNum) {
+      Object.assign(baseQuery, {
+        skip: 1,
+        cursor: {
+          id: cursorAsNum,
+        },
+      });
+    }
+
+    const messages = await prisma.message.findMany(baseQuery);
+    const reversedMessages = [...messages].reverse();
+    const nextCursor = null;
+    const previousCursor =
+      messages.length === limitAsNum ? messages[messages.length - 1].id : null;
+
+    return res
+      .status(200)
+      .json({ messages: reversedMessages, nextCursor, previousCursor });
   } catch (error) {
     return res
       .status(500)

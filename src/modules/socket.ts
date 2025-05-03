@@ -23,7 +23,8 @@ export const initSocket = (server: HttpServer): IOServer => {
       );
       const users = await redis.hvals('online-users');
       const parsedUsers = users.map((user) => JSON.parse(user));
-      io?.emit('get-users', parsedUsers);
+
+      io?.emit('get-online-users', parsedUsers);
     });
 
     socket.on('join-room', (roomId: number) => {
@@ -44,7 +45,8 @@ export const initSocket = (server: HttpServer): IOServer => {
 
       const users = await redis.hvals('online-users');
       const parsedUsers = users.map((user) => JSON.parse(user));
-      io?.emit('get-users', parsedUsers);
+
+      io?.emit('get-online-users', parsedUsers);
     });
   });
 
