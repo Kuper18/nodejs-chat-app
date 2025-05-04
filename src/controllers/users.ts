@@ -84,12 +84,40 @@ export const getAllUsers = async (
 ): Promise<any> => {
   const userId = req.sub.id;
 
+  const query = (req.query.search ?? '') as string;
+  const offset = parseInt(req.query.offset as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
+
   try {
-    const users = await prisma.user.findMany({
+    const totalCount = await prisma.user.count({
       where: { id: { not: userId } },
     });
+    const users = await prisma.user.findMany({
+      skip: (offset - 1) * limit,
+      take: limit,
+      where: {
+        id: { not: userId },
+        OR: [
+          { firstName: { contains: query, mode: 'insensitive' } },
+          { lastName: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+    });
 
-    return res.status(200).send(users);
+    const totalPages = Math.ceil(totalCount / limit);
+    const next = offset + 1;
+    const previous = offset - 1;
+
+    return res.status(200).json({
+      users,
+      meta: {
+        totalPages,
+        totalCount,
+        current: offset,
+        next: next > totalPages ? null : next,
+        previous: previous || null,
+      },
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).send({
