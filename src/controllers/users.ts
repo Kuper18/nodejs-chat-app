@@ -86,7 +86,6 @@ export const getAllUsers = async (
 
   try {
     const users = await prisma.user.findMany({
-      include: { receivedMessages: true, sentMessages: true },
       where: { id: { not: userId } },
     });
 

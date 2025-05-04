@@ -1,6 +1,7 @@
 import { Server as HttpServer } from 'http';
 import { Server as IOServer, Socket } from 'socket.io';
 import redis from './redis';
+import { TTypingData } from '../types';
 
 let io: IOServer | undefined;
 
@@ -23,6 +24,7 @@ export const initSocket = (server: HttpServer): IOServer => {
       );
       const users = await redis.hvals('online-users');
       const parsedUsers = users.map((user) => JSON.parse(user));
+      console.log(parsedUsers);
 
       io?.emit('get-online-users', parsedUsers);
     });
@@ -32,6 +34,12 @@ export const initSocket = (server: HttpServer): IOServer => {
 
       const roomName = `room-${roomId}`;
       socket.join(roomName);
+    });
+
+    socket.on('typing', ({ roomId, userId, isTyping }: TTypingData) => {
+      socket.broadcast
+        .to(`room-${roomId}`)
+        .emit('user-typing', { userId, isTyping });
     });
 
     socket.on('leave-room', (roomId: number) => {
@@ -45,6 +53,7 @@ export const initSocket = (server: HttpServer): IOServer => {
 
       const users = await redis.hvals('online-users');
       const parsedUsers = users.map((user) => JSON.parse(user));
+      console.log(parsedUsers, 'disconnect...');
 
       io?.emit('get-online-users', parsedUsers);
     });
