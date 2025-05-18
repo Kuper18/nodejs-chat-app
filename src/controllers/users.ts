@@ -90,7 +90,13 @@ export const getAllUsers = async (
 
   try {
     const totalCount = await prisma.user.count({
-      where: { id: { not: userId } },
+      where: {
+        id: { not: userId },
+        OR: [
+          { firstName: { contains: query, mode: 'insensitive' } },
+          { lastName: { contains: query, mode: 'insensitive' } },
+        ],
+      },
     });
     const users = await prisma.user.findMany({
       skip: (offset - 1) * limit,
