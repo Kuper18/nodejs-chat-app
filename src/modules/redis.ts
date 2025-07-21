@@ -1,11 +1,6 @@
 import Redis from 'ioredis';
-import { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from '../constants';
+import { REDIS_URL } from '../constants';
 
-const redis = new Redis({
-  host: REDIS_HOST,
-  port: Number(REDIS_PORT),
-  password: REDIS_PASSWORD,
-  tls: {},
-});
+const redis = new Redis(REDIS_URL);
 
 export default redis;
