@@ -32,6 +32,20 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
 
     const { accessToken, refreshToken } = generateTokens({ id: newUser.id });
 
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     return res.status(201).send({ accessToken, refreshToken });
   } catch (error) {
     console.log(error);
@@ -68,6 +82,20 @@ export const login = async (req: Request, res: Response): Promise<any> => {
     }
 
     const { accessToken, refreshToken } = generateTokens({ id: user.id });
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     return res.status(200).send({ accessToken, refreshToken });
   } catch (error) {

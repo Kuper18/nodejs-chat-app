@@ -17,7 +17,11 @@ const PORT = process.env.PORT || 8000;
 
 initSocket(server);
 
-app.use(cors());
+app.use(cors({
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  origin: process.env.CLIENT_BASE_URL,
+}));
+
 app.use(express.json());
 
 app.use('/api/users', users);
