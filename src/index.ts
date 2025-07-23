@@ -2,7 +2,6 @@ import { createServer } from 'node:http';
 
 import express from 'express';
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
 
 import prisma from './modules/prisma';
 
@@ -18,15 +17,12 @@ const PORT = process.env.PORT || 8000;
 
 initSocket(server);
 
-app.use(
-  cors({
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    origin: process.env.CLIENT_BASE_URL,
-    credentials: true,
-  })
-);
+app.use(cors({
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  origin: process.env.CLIENT_BASE_URL,
+  // credentials: true,
+}));
 
-app.use(cookieParser());
 app.use(express.json());
 
 app.use('/api/users', users);
@@ -37,7 +33,7 @@ app.use('/api/refresh-token', refreshToken);
 prisma
   .$connect()
   .then(() => {
-    console.log('Connected to the database');
+    console.log('Connected to the database')
   })
   .catch((error) => console.error('Failed to connect to the database:', error));
 
