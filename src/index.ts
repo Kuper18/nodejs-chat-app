@@ -20,7 +20,7 @@ initSocket(server);
 app.use(cors({
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   origin: process.env.CLIENT_BASE_URL,
-  credentials: true,
+  // credentials: true,
 }));
 
 app.use(express.json());
