@@ -17,12 +17,12 @@ const refreshToken = async (req: Request, res: Response) => {
     ) {
       const { accessToken } = generateTokens({ id: decoded.id });
 
-      res.cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 15 * 60 * 1000,
-      });
+      // res.cookie('accessToken', accessToken, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === 'production',
+      //   sameSite: 'strict',
+      //   maxAge: 15 * 60 * 1000,
+      // });
 
       res.status(200).send({ accessToken });
     } else {
