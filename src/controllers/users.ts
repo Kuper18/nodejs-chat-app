@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 import { loginSchema, signupSchema } from '../validators/auth';
 import prisma from '../modules/prisma';
 import { generateTokens } from '../services/auth';
-import { COOKIE_OPTIONS } from '../constants';
 
 export const signup = async (req: Request, res: Response): Promise<any> => {
   const parseResult = signupSchema.safeParse(req.body);
@@ -32,17 +31,6 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
     });
 
     const { accessToken, refreshToken } = generateTokens({ id: newUser.id });
-
-    res.cookie('accessToken', accessToken, {
-      ...COOKIE_OPTIONS,
-      httpOnly: false,
-      maxAge: 15 * 60 * 1000,
-    });
-
-    res.cookie('refreshToken', refreshToken, {
-      ...COOKIE_OPTIONS,
-      httpOnly: true,
-    });
 
     return res.status(201).send({ accessToken, refreshToken });
   } catch (error) {
@@ -80,17 +68,6 @@ export const login = async (req: Request, res: Response): Promise<any> => {
     }
 
     const { accessToken, refreshToken } = generateTokens({ id: user.id });
-
-    res.cookie('accessToken', accessToken, {
-      ...COOKIE_OPTIONS,
-      httpOnly: false,
-      maxAge: 15 * 60 * 1000,
-    });
-
-    res.cookie('refreshToken', refreshToken, {
-      ...COOKIE_OPTIONS,
-      httpOnly: true,
-    });
 
     return res.status(200).send({ accessToken, refreshToken });
   } catch (error) {

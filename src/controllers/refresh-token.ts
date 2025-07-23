@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-import { COOKIE_OPTIONS, REFRESH_TOKEN_SECRET } from '../constants';
+import { REFRESH_TOKEN_SECRET } from '../constants';
 import { generateTokens } from '../services/auth';
 
 const refreshToken = async (req: Request, res: Response) => {
@@ -17,11 +17,6 @@ const refreshToken = async (req: Request, res: Response) => {
     ) {
       const { accessToken } = generateTokens({ id: decoded.id });
 
-      res.cookie('accessToken', accessToken, {
-        ...COOKIE_OPTIONS,
-        httpOnly: false,
-        maxAge: 15 * 60 * 1000,
-      });
       res.status(200).send({ accessToken });
     } else {
       res.status(400).send({ message: 'Invalid refresh token payload.' });

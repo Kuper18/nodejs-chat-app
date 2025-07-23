@@ -1,23 +1,23 @@
-import { NextFunction, Request, Response } from 'express';
+import 'express';
+import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { ACCESS_TOKEN_SECRET } from '../constants';
 
-export function auth(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies.accessToken;
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
+
+export default function auth(req: Request, res: Response, next: NextFunction) {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ message: 'Access denied. No token provided.' });
+    res.status(401).send({ message: 'Access denied. No token provided.' });
+    return;
   }
 
   try {
     const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET);
+
     req.sub = decoded;
     next();
   } catch (error) {
-    return res
-      .status(401)
-      .json({ message: 'Access denied. Invalid token provided.' });
+    res.status(401).send({ message: 'Access denied. Invalid token provided.' });
   }
 }

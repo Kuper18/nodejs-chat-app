@@ -2,7 +2,6 @@ import { createServer } from 'node:http';
 
 import express from 'express';
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
 
 import prisma from './modules/prisma';
 
@@ -22,11 +21,9 @@ app.use(
   cors({
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     origin: process.env.CLIENT_BASE_URL,
-    credentials: true,
   })
 );
 
-app.use(cookieParser());
 app.use(express.json());
 
 app.use('/api/users', users);
